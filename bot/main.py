@@ -2,8 +2,8 @@ import logging
 from telegram.ext import Application
 
 from config.settings import settings
-from bot.handlers.start_handler import start_handler
-from data.dataset_manager import dataset_manager  # <-- НОВОЕ: импорт менеджера датасета
+from data.dataset_manager import dataset_manager
+from bot.conversation.handlers import setup_conversation_handler  # <-- НОВОЕ
 
 
 def setup_logging() -> None:
@@ -69,10 +69,11 @@ def create_application() -> Application:
     # Создаем Application
     application = Application.builder().token(settings.BOT_TOKEN).build()
     
-    # Регистрируем обработчики
-    application.add_handler(start_handler)
+    # Настраиваем ConversationHandler
+    conversation_handler = setup_conversation_handler()
+    application.add_handler(conversation_handler)
     
-    logging.info(f"Бот {settings.BOT_NAME} инициализирован")
+    logging.info(f"Бот {settings.BOT_NAME} инициализирован с ConversationHandler")
     return application
 
 
